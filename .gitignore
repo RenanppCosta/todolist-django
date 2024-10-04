@@ -1,0 +1,39 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.db
+*.sqlite3
+
+# Django
+*.log
+*.pot
+*.pyc
+*.egg-info/
+media/
+staticfiles/
+.env
+.venv/
+venv/
+ENV/
+env/
+*.DS_Store
+*.swp
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Test Coverage
+.coverage
+coverage.xml
+*.cover
+
+# MySQL database files
+*.sql
+
+# Other
+Thumbs.db
