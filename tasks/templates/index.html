@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Todo List{% endblock %}
+{% block content %}
+	<header class="bg-cyan-950 p-4 flex justify-center">
+		<h1 class="text-3xl text-gray-300">Todo List</h1>
+	</header>
+
+	<form method="POST" class="flex justify-center p-4 gap-3">
+		{% csrf_token %}  
+		{{ form.title }}   
+		<button type="submit" class="bg-emerald-700 text-white p-2">Criar Tarefa</button>
+	</form>
+	
+	<ul>
+		{% for task in tasks %}
+			<li>{{ task.title }}</li>
+		{% endfor %}
+	</ul>
+{% endblock %}
