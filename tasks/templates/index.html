@@ -11,9 +11,20 @@
 		<button type="submit" class="bg-emerald-700 text-white p-2">Criar Tarefa</button>
 	</form>
 	
-	<ul>
+	<ul class="flex flex-col items-center gap-3">
 		{% for task in tasks %}
-			<li>{{ task.title }}</li>
+			<li class="bg-cyan-950 w-[70%] p-4 text-white flex flex-row justify-between gap-2">
+				<div class="md:flex flex-row gap-4">
+					{{ task.title }}
+					<div class="text-sm text-gray-400 flex items-center">
+						{{ task.created_at|date:"d/m/Y, H:i" }}
+					</div>
+				</div>
+				<div class="flex gap-5 items-center">
+					<i class="fa-solid fa-trash"></i>
+					<i class="fa-solid fa-pencil"></i>
+				</div>
+			</li>
 		{% endfor %}
 	</ul>
 {% endblock %}
