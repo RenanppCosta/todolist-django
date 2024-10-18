@@ -13,3 +13,8 @@ def create_task(request):
     
     tasks = Task.objects.all() 
     return render(request, "index.html", {"form": form, "tasks": tasks})
+
+def delete_task(request, id):
+    task = Task.objects.get(id=id)
+    task.delete()
+    return redirect('create_task')
