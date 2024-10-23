@@ -30,3 +30,13 @@ def update_task(request):
 
         data = {"title": title, "status":"update_task"}
         return JsonResponse(data)
+
+def check_task_is_completed(request):
+        data_id = request.GET.get("data_id")
+
+        task = get_object_or_404(Task, id=data_id)
+        task.is_completed = not task.is_completed
+        task.save()
+
+        data = {"is_completed": task.is_completed}
+        return JsonResponse(data)

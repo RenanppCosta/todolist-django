@@ -14,24 +14,25 @@
 	
 	<ul class="flex flex-col items-center gap-3">
 		{% for task in tasks %}
-			<li class="bg-cyan-950 w-[90%] md:w-[70%] p-4 text-white flex flex-row justify-between gap-2 flex-wrap">
-				<div class="md:flex flex-row gap-6">
-					<span class="task_title text-lg font-semibold" id="task-title{{task.id}}">{{ task.title }}</span>
-
-					<form class="hidden flex gap-4 m-0 md:w-[400px]" id="update-form-title{{task.id}}" id="form-update{{task.id}}" method="GET">
-						<input class="p-2 text-white focus:outline-none bg-gray-600 placeholder-white w-full" type="text" id="update-input-title{{task.id}}" value="{{task.title}}">
-						<button type="submit" id="edit-btn{{task.id}}"><i class="fa fa-edit link-warning"></i></button>
-					</form>
-			
-					<div class="text-sm text-gray-400 flex items-center" id="task-date{{task.id}}">
-						{{ task.created_at|date:"d/m/Y, H:i" }}
-					</div>
+		<li class="task cursor-pointer bg-cyan-950 w-[90%] md:w-[70%] p-4 text-white flex flex-row justify-between gap-2 hover:bg-cyan-800 duration-200 {% if task.is_completed %} opacity-70 {% endif %}" data-id="{{task.id}}" id="task{{task.id}}">
+			<div class="md:flex flex-row gap-6">
+				<span class="task_title text-lg font-semibold {% if task.is_completed %} line-through {% endif %}" id="task-title{{task.id}}">{{ task.title }}</span>
+	
+				<form class="hidden flex gap-4 m-0 md:w-[400px]" id="update-form-title{{task.id}}" method="GET">
+					<input class="p-2 text-white focus:outline-none bg-gray-600 placeholder-white w-full" type="text" id="update-input-title{{task.id}}" value="{{task.title}}">
+					<button type="submit" id="edit-btn{{task.id}}"><i class="fa fa-edit link-warning"></i></button>
+				</form>
+	
+				<div class="text-sm text-gray-400 flex items-center gap-2" id="task-date{{task.id}}">
+					{{ task.created_at|date:"d/m/Y, H:i" }}
+					<i class="fa-regular fa-circle-check text-base text-white {% if not task.is_completed %} hidden {% endif %}" id="check-task{{task.id}}"></i>
 				</div>
-				<div class="flex gap-5 items-center">
-					<i class="fa-solid fa-pencil" data-id="{{task.id}}"></i>
-					<a href="{% url 'delete_task' task.id %}"><i class="fa-solid fa-trash"></i></a> 
-				</div>
-			</li>
+			</div>
+			<div class="flex gap-5 items-center">
+				<i class="fa-solid fa-pencil cursor-pointer {% if task.is_completed %} hidden {% endif %}" id="edit-task-btn{{task.id}}" data-id="{{task.id}}"></i>
+				<a href="{% url 'delete_task' task.id %}"><i class="fa-solid fa-trash"></i></a> 
+			</div>
+		</li>
 		{% endfor %}
 	</ul>
 {% endblock %}
@@ -67,6 +68,44 @@
 				}); 
 			});
 	})
+
+	$(".task").click(function(){
+		const data_id = $(this).attr("data-id");
+
+		let taskCompleted = $("#task" + data_id).hasClass("opacity-70");
+
+		if (taskCompleted) {
+			$("#check-task" + data_id).addClass("hidden");
+			$("#task" + data_id).removeClass("opacity-70");
+			$("#task" + data_id + " #task-title" + data_id).removeClass("line-through");
+			$("#edit-task-btn" + data_id).removeClass("hidden");
+		} else {
+			$("#check-task" + data_id).removeClass("hidden");
+			$("#task" + data_id).addClass("opacity-70");
+			$("#task" + data_id + " #task-title" + data_id).addClass("line-through");
+			$("#edit-task-btn" + data_id).addClass("hidden");
+		}
+
+		$.ajax({
+			type: "GET",
+			url:"{% url 'check_task_is_completed' %}",
+			data: {"data_id": data_id},
+			datatype: "json",
+			success: function(data){
+				if (data.is_completed == true){
+					$("#edit-task-btn" + data_id).addClass("hidden");
+					console.log(data.is_completed)
+				}else{
+					$("#check-task" + data_id).addClass("hidden")
+					$("#task" + data_id).removeClass("opacity-70")
+					$("#task" + data_id + " #task-title" + data_id).removeClass("line-through")
+					$("#edit-task-btn" + data_id).removeClass("hidden");
+				}
+			}
+		})
+
+	})
+
 </script>
 
 {% endblock scripts %}
