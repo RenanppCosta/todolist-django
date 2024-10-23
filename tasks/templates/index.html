@@ -39,10 +39,12 @@
 
 {% block scripts %}
 
+
 <script type="text/javascript">
+	let isEditing = false;
 	$(".fa-pencil").click( function() {
 		let data_id = $(this).attr("data-id");
-	
+		isEditing = true;
 			$("#update-form-title" + data_id).removeClass("hidden")
 			$("#task-title" + data_id).addClass("hidden")
 			$("#task-date" + data_id).addClass("hidden")
@@ -62,15 +64,21 @@
 							$("#update-form-title" + data_id).addClass("hidden");
 							$("#task-title" + data_id).removeClass("hidden"); 
 							$("#task-date" + data_id).removeClass("hidden")
-							$("#task-title" + data_id).html(data.title); 
+							$("#task-title" + data_id).html(data.title);
+							isEditing = false; 
 						}  
 					}
 				}); 
 			});
 	})
 
-	$(".task").click(function(){
+	$(".task").click(function(e){
+		if(isEditing) return;
 		const data_id = $(this).attr("data-id");
+
+		if ($(e.target).closest(".fa-pencil, .fa-trash", ".fa-edit").length) {
+			return; 
+		}
 
 		let taskCompleted = $("#task" + data_id).hasClass("opacity-70");
 
