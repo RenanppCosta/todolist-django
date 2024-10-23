@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Todo List{% endblock %}
 {% block content %}
+
 	<header class="bg-cyan-950 p-4 flex justify-center">
 		<h1 class="text-3xl text-gray-300">Todo List</h1>
 	</header>
@@ -13,18 +14,59 @@
 	
 	<ul class="flex flex-col items-center gap-3">
 		{% for task in tasks %}
-			<li class="bg-cyan-950 w-[70%] p-4 text-white flex flex-row justify-between gap-2">
-				<div class="md:flex flex-row gap-4">
-					{{ task.title }}
-					<div class="text-sm text-gray-400 flex items-center">
+			<li class="bg-cyan-950 w-[90%] md:w-[70%] p-4 text-white flex flex-row justify-between gap-2 flex-wrap">
+				<div class="md:flex flex-row gap-6">
+					<span class="task_title text-lg font-semibold" id="task-title{{task.id}}">{{ task.title }}</span>
+
+					<form class="hidden flex gap-4 m-0 md:w-[400px]" id="update-form-title{{task.id}}" id="form-update{{task.id}}" method="GET">
+						<input class="p-2 text-white focus:outline-none bg-gray-600 placeholder-white w-full" type="text" id="update-input-title{{task.id}}" value="{{task.title}}">
+						<button type="submit" id="edit-btn{{task.id}}"><i class="fa fa-edit link-warning"></i></button>
+					</form>
+			
+					<div class="text-sm text-gray-400 flex items-center" id="task-date{{task.id}}">
 						{{ task.created_at|date:"d/m/Y, H:i" }}
 					</div>
 				</div>
 				<div class="flex gap-5 items-center">
+					<i class="fa-solid fa-pencil" data-id="{{task.id}}"></i>
 					<a href="{% url 'delete_task' task.id %}"><i class="fa-solid fa-trash"></i></a> 
-					<i class="fa-solid fa-pencil"></i>
 				</div>
 			</li>
 		{% endfor %}
 	</ul>
 {% endblock %}
+
+{% block scripts %}
+
+<script type="text/javascript">
+	$(".fa-pencil").click( function() {
+		let data_id = $(this).attr("data-id");
+	
+			$("#update-form-title" + data_id).removeClass("hidden")
+			$("#task-title" + data_id).addClass("hidden")
+			$("#task-date" + data_id).addClass("hidden")
+		
+			$("#edit-btn" + data_id).on("click", function (e) {
+				e.preventDefault();
+					
+				title = $("#update-input-title"+ data_id).val();
+			
+				$.ajax({
+					type: "GET",
+					url: "{% url 'update_task' %}",
+					data: {"data_id": data_id,"task_title": title,},
+					datatype: "json",
+					success: function (data) {
+						if (data.status == "update_task") {
+							$("#update-form-title" + data_id).addClass("hidden");
+							$("#task-title" + data_id).removeClass("hidden"); 
+							$("#task-date" + data_id).removeClass("hidden")
+							$("#task-title" + data_id).html(data.title); 
+						}  
+					}
+				}); 
+			});
+	})
+</script>
+
+{% endblock scripts %}
