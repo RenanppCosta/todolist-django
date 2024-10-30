@@ -76,10 +76,10 @@
 		if(isEditing) return;
 		const data_id = $(this).attr("data-id");
 
-		if ($(e.target).closest(".fa-pencil, .fa-trash", ".fa-edit").length) {
+		if ($(e.target).closest(".fa-trash").length) {
 			return; 
 		}
-
+		
 		let taskCompleted = $("#task" + data_id).hasClass("opacity-70");
 
 		if (taskCompleted) {
